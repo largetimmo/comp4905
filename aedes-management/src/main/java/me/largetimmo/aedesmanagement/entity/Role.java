@@ -14,7 +14,7 @@ public class Role {
     @Id
     private String name;
 
-    @OneToMany
+    @ManyToMany
     @Column
     private Set<Permission> permissions;
 }

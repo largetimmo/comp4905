@@ -14,4 +14,17 @@ public enum ActionAvailability {
     public Integer getId() {
         return id;
     }
+
+    public static ActionAvailability getById(int id){
+        switch (id){
+            case 0:
+                return PUBLISH;
+            case 1:
+                return SUBSCRIBE;
+            case 2:
+                return ALL;
+            default:
+                throw new IllegalArgumentException("Valid range for action availablity is 0-2");
+        }
+    }
 }
