@@ -49,5 +49,11 @@ public class UserController {
         return ResponseEntity.ok().build();
     }
 
+    @PostMapping(path = "/api/user/bulk",params = "count")
+    public ResponseEntity<Void> generateUsers(@RequestParam("count")Integer count, @RequestBody UserDTO userDTO){
+        userManager.generateUsers(userDTO.getRole(),count);
+        return ResponseEntity.ok().build();
+    }
+
 
 }

@@ -1,10 +1,10 @@
 <template>
     <a-layout id="components-layout-demo-custom-trigger" :style="{height:'100%'}">
-        <a-layout-sider v-model="collapsed" :trigger="null" collapsible >
-            <a-menu theme="dark" mode="inline" :default-selected-keys="['1']"  @click="menuClickHandler">
+        <a-layout-sider v-model="collapsed" :trigger="null" collapsible>
+            <a-menu theme="dark" mode="inline" :default-selected-keys="['1']" @click="menuClickHandler">
                 <a-menu-item key="1">
                     <a-icon type="user"/>
-                    <span>User</span>
+                    <span>Device</span>
                 </a-menu-item>
                 <a-menu-item key="2">
                     <a-icon type="database"/>
@@ -27,9 +27,6 @@
             <a-layout-content
                     :style="{ margin: '24px 16px', padding: '24px', background: '#fff', minHeight: '280px' }"
             >
-                <div>
-                    content:
-                </div>
                 <router-view></router-view>
             </a-layout-content>
         </a-layout>
@@ -42,18 +39,17 @@
                 collapsed: false,
             }
         },
-        methods:{
-            menuClickHandler(item){
+        methods: {
+            menuClickHandler(item) {
                 let target = ''
-                if (item['key'] === '1'){
+                if (item['key'] === '1') {
                     target = 'user'
-                }
-                else if (item['key'] === '2'){
+                } else if (item['key'] === '2') {
                     target = 'role';
-                }else if (item['key'] === '3'){
+                } else if (item['key'] === '3') {
                     target = 'permission'
                 }
-                if (this.$router.name !== target){
+                if (this.$router.name !== target) {
                     this.$router.push(target)
                 }
             }

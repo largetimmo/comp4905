@@ -1,7 +1,8 @@
 <template>
     <div>
         <a-row type="flex" justify="end">
-            <a-button type="primary" @click="showAddUser">Add user</a-button>
+            <a-button type="primary" @click="showAddUser" style="margin-right: 10px">Add Client</a-button>
+            <a-button type="primary" @click="showAddUserBulk">Add Clients Bulk</a-button>
         </a-row>
         <a-table :columns="cols" :data-source="users" :rowKey="(record)=>record.username">
             <span slot="action" slot-scope="record">
@@ -47,7 +48,27 @@
                 <span style="font-weight:bold ">{{targetUserUsername}}</span>
             </div>
         </a-modal>
-        <a-modal title="Add user"
+        <a-modal title="Add client bulk" :visible="addUserBulkVisible" @ok="handleAddUserBulk"
+                 @cancel="addUserBulkVisible=false">
+            <div>
+                <a-input v-model="userBulkGenerate.count" placeholder="Number of clients to be generated"/>
+                <a-row>
+                    <a-dropdown>
+                        <a-button>{{userBulkGenerate.role}}
+                            <a-divider type="vertical"/>
+                            <a-icon type="down"/>
+
+                        </a-button>
+                        <a-menu slot="overlay">
+                            <a-menu-item v-for="(role) in roles" @click="()=>userBulkGenerate.role = role.name">
+                                {{role.name}}
+                            </a-menu-item>
+                        </a-menu>
+                    </a-dropdown>
+                </a-row>
+            </div>
+        </a-modal>
+        <a-modal title="Add client"
                  :visible="addUserVisible"
                  @ok="handleAddUser"
                  @cancel="()=>addUserVisible=false">
@@ -95,6 +116,11 @@
                         key: 'role'
                     },
                     {
+                        title: 'Violation Count',
+                        key: 'violationCount',
+                        dataIndex: 'violationCount'
+                    },
+                    {
                         title: 'Action',
                         key: 'action',
                         scopedSlots: {customRender: 'action'},
@@ -104,13 +130,15 @@
                     {
                         username: "abc",
                         password: "qwe",
-                        role: "123"
+                        role: "123",
+                        violationCount: 0
                     }
                 ],
                 changePasswordVisible: false,
                 changeRoleVisible: false,
                 deleteUserVisible: false,
                 addUserVisible: false,
+                addUserBulkVisible: false,
                 targetUserUsername: '',
                 passwordChangeUsername: "",
                 newPassword: "",
@@ -119,6 +147,10 @@
                 createdNewUser: {
                     username: '',
                     password: '',
+                    role: ''
+                },
+                userBulkGenerate: {
+                    count: 0,
                     role: ''
                 }
             }
@@ -212,6 +244,23 @@
             sendNotification(message) {
                 this.$notification.open({
                     message: message
+                })
+            },
+            showAddUserBulk() {
+                this.addUserBulkVisible = true;
+                this.userBulkGenerate.count = 0;
+                this.userBulkGenerate.role = '';
+            },
+            handleAddUserBulk() {
+                if (this.userBulkGenerate.count > 300) {
+                    this.sendNotification('Generating ' + this.userBulkGenerate.count + ' credentials. This may take some time.')
+                }
+                this.$axios.post('/api/user/bulk?count=' + this.userBulkGenerate.count, {
+                    role: this.userBulkGenerate.role
+                }).then((response) => {
+                    this.sendNotification('Credential generation finished');
+                    this.loadUsers();
+                    this.addUserBulkVisible=false;
                 })
             }
 

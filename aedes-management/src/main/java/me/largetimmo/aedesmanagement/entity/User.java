@@ -24,4 +24,7 @@ public class User {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn
     private Role role;
+
+    @Column(nullable = false)
+    private Integer violationCount;
 }

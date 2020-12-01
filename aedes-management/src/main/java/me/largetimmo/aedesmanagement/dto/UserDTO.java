@@ -10,4 +10,6 @@ public class UserDTO {
     private String password;
 
     private String role;
+
+    private Integer violationCount;
 }

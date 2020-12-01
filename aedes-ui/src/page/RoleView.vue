@@ -44,17 +44,20 @@
                     <span slot="action" slot-scope="record">
                         <a-icon type="close-circle" @click="handleDeletePermissionFromNewRole(record.id)"/>
                     </span>
+                    <span slot="regex" slot-scope="record">
+                        {{translateToStandard(record.regex)}}
+                    </span>
                     <span slot="footer" style="width: 100%">
                         <a-dropdown>
                             <a-button>
-                                <span>{{newCreatedRole.newPermissionsSelected}}</span>
+                                <span>{{translateToStandard(newCreatedRole.newPermissionsSelected)}}</span>
                                 <a-divider type="vertical"/>
                                 <a-icon type="down"/>
                             </a-button>
                             <a-menu slot="overlay">
                                 <a-menu-item v-for="(per) in permissions"
                                              @click="handleSelectPermissionForNewRole(per)">
-                                    id:{{per.id}} Regex: {{per.regex}} Access:
+                                    id:{{per.id}} Regex: {{translateToStandard(per.regex)}} Access:
                                     <span v-if="per.operation === 0"> Publish</span>
                                     <span v-if="per.operation === 1"> Subscribe</span>
                                     <span v-if="per.operation === 2"> Publish/Subscribe</span>
@@ -77,6 +80,9 @@
                 </span>
                 <a-table :columns="newRolePermissionsCols" :data-source="editPermissionRole.permissions"
                          :rowKey="(record)=>record.id">
+                    <span slot="regex" slot-scope="record">
+                        {{translateToStandard(record.regex)}}
+                    </span>
                     <span slot="accessControl" slot-scope="record">
                         <span v-if="record.operation === 0"> Publish Only</span>
                         <span v-if="record.operation === 1"> Subscribe Only</span>
@@ -85,6 +91,7 @@
                     <span slot="action" slot-scope="record">
                         <a-icon type="close-circle" @click="handleDeletePermissionFromExistingRole(record.id)"/>
                     </span>
+
                     <span slot="footer" style="width: 100%">
                         <a-dropdown>
                             <a-button>
@@ -123,7 +130,7 @@
                     }, {
                         dataIndex: 'associatedUser',
                         key: 'associatedUser',
-                        title: 'Associated User'
+                        title: 'Associated Clients'
                     }, {
                         scopedSlots: {customRender: 'associatedPermissions'},
                         key: 'associatedPermissions',
@@ -141,9 +148,9 @@
                         title: 'Permission Id'
                     },
                     {
-                        dataIndex: 'regex',
                         key: 'regex',
-                        title: 'Regular expression'
+                        title: 'Regular expression',
+                        scopedSlots: {customRender: 'regex'},
                     },
                     {
                         scopedSlots: {customRender: 'accessControl'},
@@ -296,9 +303,9 @@
                 parsedPermission += ' Regex:';
                 parsedPermission += permission.regex;
                 parsedPermission += " Access:";
-                if (permission === 0) {
+                if (permission.operation === 0) {
                     parsedPermission += 'Publish'
-                } else if (permission === 1) {
+                } else if (permission.operation === 1) {
                     parsedPermission += 'Subscribe'
                 } else {
                     parsedPermission += 'Publish/Subscribe'
@@ -322,7 +329,11 @@
                         message: 'update role failed'
                     });
                 })
-            }
+            },
+            translateToStandard(regexString) {
+                console.log(regexString);
+                return regexString.replace(".*", "#").replace("[^/#]*/", "+/");
+            },
 
         },
         mounted() {
